@@ -260,6 +260,7 @@ let anthropicKey = localStorage.getItem('anthropic_api_key') || '';
 let entries = [];
 let nextId = 1;
 let spreadsheetId = null;
+let vendorList = [];
 
 // ── API KEY ──
 function initApiKey() {
@@ -327,8 +328,30 @@ function onLoggedIn() {
   document.getElementById('loginStatus').textContent = 'Google Sheets bereit';
   document.getElementById('googleCard').classList.add('done');
   document.getElementById('googleTitle').textContent = '✓ Google Sheets verbunden';
-  document.getElementById('googleHint').textContent = 'Einträge werden in "Receipt Scanner Data" gespeichert.';
+  document.getElementById('googleHint').innerHTML = 'Einträge werden in &quot;Receipt Scanner Data&quot; gespeichert.';
+  // Link wird nach getOrCreateSheet() gesetzt
   updateSaveBtn();
+  loadVendorList();
+}
+
+async function loadVendorList() {
+  try {
+    const sheetId = await getOrCreateSheet();
+    const res = await fetch(
+      `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Haendler!A:A`,
+      { headers: { 'Authorization': `Bearer ${accessToken}` } }
+    );
+    const data = await res.json();
+    if (data.values) {
+      vendorList = data.values.flat().filter(v => v && v.trim());
+      if (vendorList.length > 0) {
+        document.getElementById('googleHint').textContent =
+          `Einträge werden in "Receipt Scanner Data" gespeichert · ${vendorList.length} Händler geladen`;
+      }
+    }
+  } catch (err) {
+    console.log('Händlerliste nicht geladen:', err);
+  }
 }
 
 // ── FILES ──
@@ -380,7 +403,12 @@ async function processFile(file) {
           role: 'user',
           content: [
             { type: 'image', source: { type: 'base64', media_type: file.type || 'image/jpeg', data: b64 } },
-            { type: 'text', text: `Analysiere dieses Foto. Es koennen ein oder mehrere Kassenbons abgebildet sein. Antworte NUR mit einem JSON-Array, ohne Markdown, ohne Erklaerung. Fuer jeden erkannten Bon ein Objekt: [{"date":"YYYY-MM-DD","vendor":"Marktname z.B. Netto Lidl Aldi Rewe Famila Edeka Penny Kaufland","amount":"Gesamtbetrag als Zahl z.B. 9.32","ort":"Stadt oder Ort des Marktes","handschrift":"handschriftliche Notizen auf dem Bon falls vorhanden sonst leer"}]. Wenn kein Bon erkennbar: leeres Array [].` }
+            { type: 'text', text: (() => {
+              const vendorHint = vendorList.length > 0
+                ? 'Waehle den vendor-Namen EXAKT aus dieser Liste (case-sensitive): ' + vendorList.join(', ') + '. Wenn kein Name passt, verwende den erkannten Marktnamen.'
+                : 'Marktname z.B. Netto, Lidl, Aldi, Rewe, Famila, Edeka, Penny, Kaufland.';
+              return 'Analysiere dieses Foto. Es koennen ein oder mehrere Kassenbons abgebildet sein. Antworte NUR mit einem JSON-Array, ohne Markdown, ohne Erklaerung. Fuer jeden erkannten Bon ein Objekt: [{"date":"YYYY-MM-DD","vendor":"' + vendorHint + '","amount":"Gesamtbetrag als Zahl z.B. 9.32","ort":"Stadt oder Ort des Marktes","handschrift":"handschriftliche Notizen auf dem Bon falls vorhanden sonst leer"}]. Wenn kein Bon erkennbar: leeres Array [].';
+            })() }
           ]
         }]
       })
@@ -531,7 +559,7 @@ async function getOrCreateSheet() {
   if (spreadsheetId) return spreadsheetId;
   const q = encodeURIComponent(`name='${SHEET_NAME}' and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false`);
   const s = await (await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id)`, { headers: { 'Authorization': `Bearer ${accessToken}` } })).json();
-  if (s.files?.length) { spreadsheetId = s.files[0].id; return spreadsheetId; }
+  if (s.files?.length) { spreadsheetId = s.files[0].id; setSheetLink(); return spreadsheetId; }
 
   const fq = encodeURIComponent(`name='${FOLDER_NAME}' and mimeType='application/vnd.google-apps.folder' and trashed=false`);
   const fd = await (await fetch(`https://www.googleapis.com/drive/v3/files?q=${fq}&fields=files(id)`, { headers: { 'Authorization': `Bearer ${accessToken}` } })).json();
@@ -555,7 +583,15 @@ async function getOrCreateSheet() {
       method: 'PATCH', headers: { 'Authorization': `Bearer ${accessToken}` }
     });
   }
+  setSheetLink();
   return spreadsheetId;
+}
+
+function setSheetLink() {
+  const hint = document.getElementById('googleHint');
+  if (hint && spreadsheetId) {
+    hint.innerHTML = 'Einträge in &quot;Receipt Scanner Data&quot; &nbsp;·&nbsp; <a href="https://docs.google.com/spreadsheets/d/' + spreadsheetId + '" target="_blank" style="color:var(--accent2);text-decoration:none;font-weight:500">📊 Sheet öffnen ↗</a>';
+  }
 }
 
 // ── TOAST ──
