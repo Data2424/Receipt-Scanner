@@ -188,6 +188,12 @@
   #toast.show { transform: translateX(-50%) translateY(0); }
   #toast.success { background: var(--success); }
   #toast.error { background: var(--danger); }
+
+  /* Lightbox */
+  .lightbox { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.92); z-index:1000; align-items:center; justify-content:center; }
+  .lightbox.open { display:flex; }
+  .lightbox img { max-width:95vw; max-height:92vh; object-fit:contain; border-radius:8px; }
+  .lightbox-close { position:fixed; top:1rem; right:1rem; background:white; border:none; border-radius:50%; width:2rem; height:2rem; font-size:1rem; cursor:pointer; line-height:2rem; text-align:center; }
 </style>
 </head>
 <body>
@@ -244,6 +250,11 @@
     Alles löschen
   </button>
 </main>
+
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightboxImg" src="" alt="Bon">
+</div>
 
 <div id="toast"></div>
 
@@ -334,23 +345,34 @@ function onLoggedIn() {
   loadVendorList();
 }
 
+// vendorMap: { "Edeka": ["Zurheide", "Frischemarkt Mueller"], ... }
+let vendorMap = {};
+
 async function loadVendorList() {
   try {
     const sheetId = await getOrCreateSheet();
     const res = await fetch(
-      `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Haendler!A:A`,
+      `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Haendler!A:B`,
       { headers: { 'Authorization': `Bearer ${accessToken}` } }
     );
     const data = await res.json();
     if (data.values) {
-      vendorList = data.values.flat().filter(v => v && v.trim());
+      vendorMap = {};
+      vendorList = [];
+      data.values.forEach(row => {
+        const name = (row[0] || '').trim();
+        if (!name) return;
+        vendorList.push(name);
+        const aliases = (row[1] || '').split(',').map(a => a.trim()).filter(Boolean);
+        vendorMap[name] = aliases;
+      });
       if (vendorList.length > 0) {
-        document.getElementById('googleHint').textContent =
-          `Einträge werden in "Receipt Scanner Data" gespeichert · ${vendorList.length} Händler geladen`;
+        document.getElementById('googleHint').innerHTML =
+          `${vendorList.length} Haendler geladen &nbsp;·&nbsp; <a href="https://docs.google.com/spreadsheets/d/${sheetId}" target="_blank" style="color:var(--accent2);text-decoration:none;font-weight:500">Sheets oeffnen ↗</a>`;
       }
     }
   } catch (err) {
-    console.log('Händlerliste nicht geladen:', err);
+    console.log('Haendlerliste nicht geladen:', err);
   }
 }
 
@@ -404,10 +426,20 @@ async function processFile(file) {
           content: [
             { type: 'image', source: { type: 'base64', media_type: file.type || 'image/jpeg', data: b64 } },
             { type: 'text', text: (() => {
-              const vendorHint = vendorList.length > 0
-                ? 'Waehle den vendor-Namen EXAKT aus dieser Liste (case-sensitive): ' + vendorList.join(', ') + '. Wenn kein Name passt, verwende den erkannten Marktnamen.'
-                : 'Marktname z.B. Netto, Lidl, Aldi, Rewe, Famila, Edeka, Penny, Kaufland.';
-              return 'Analysiere dieses Foto. Es koennen ein oder mehrere Kassenbons abgebildet sein. Antworte NUR mit einem JSON-Array, ohne Markdown, ohne Erklaerung. Fuer jeden erkannten Bon ein Objekt: [{"date":"YYYY-MM-DD","vendor":"' + vendorHint + '","amount":"Gesamtbetrag als Zahl z.B. 9.32","ort":"Stadt oder Ort des Marktes","handschrift":"handschriftliche Notizen auf dem Bon falls vorhanden sonst leer"}]. Wenn kein Bon erkennbar: leeres Array [].';
+              let vendorHint = 'Marktname z.B. Netto, Lidl, Aldi, Rewe, Famila, Edeka, Penny, Kaufland.';
+              if (vendorList.length > 0) {
+                const aliasLines = vendorList.map(v => {
+                  const aliases = vendorMap[v] && vendorMap[v].length > 0 ? ' (auch bekannt als: ' + vendorMap[v].join(', ') + ')' : '';
+                  return v + aliases;
+                }).join('; ');
+                vendorHint = 'Waehle den vendor-Namen EXAKT aus dieser Liste: ' + aliasLines + '. Nutze den Hauptnamen (vor der Klammer). Wenn kein Name passt, verwende den erkannten Marktnamen.';
+              }
+              return `Analysiere dieses Foto sorgfaeltig. Es koennen ein oder mehrere Kassenbons abgebildet sein.
+WICHTIG: Lies bei jedem Bon das Datum DIREKT vom Bon ab - nicht schaetzen.
+Antworte NUR mit einem JSON-Array, ohne Markdown, ohne Erklaerung.
+Fuer jeden erkannten Bon ein separates Objekt mit dem JEWEILIGEN Datum dieses Bons:
+[{"date":"YYYY-MM-DD","vendor":"${vendorHint}","amount":"Gesamtbetrag als Zahl z.B. 9.32","ort":"Stadt oder Ort","handschrift":"handschriftliche Notizen falls vorhanden sonst leer"}]
+Wenn kein Bon erkennbar: leeres Array [].`;
             })() }
           ]
         }]
@@ -482,7 +514,7 @@ function cardHTML(entry) {
 
   return `
     <div class="scan-card-header">
-      <img src="${entry.thumb}" alt="Bon">
+      <img src="${entry.thumb}" alt="Bon" onclick="openLightbox('${entry.thumb}')" style="cursor:zoom-in">
       <div class="scan-card-info">
         <div class="scan-card-filename">${esc(entry.filename)}</div>
         <div class="scan-card-status ${entry.status}">${statusText}</div>
@@ -601,6 +633,15 @@ function showToast(msg, type = '') {
   t.className = type ? `show ${type}` : 'show';
   clearTimeout(t._timer);
   t._timer = setTimeout(() => { t.className = ''; }, 3500);
+}
+
+// ── LIGHTBOX ──
+function openLightbox(src) {
+  document.getElementById('lightboxImg').src = src;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
 }
 
 // ── INIT ──
