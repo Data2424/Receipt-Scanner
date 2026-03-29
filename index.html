@@ -434,19 +434,24 @@ async function processFile(file) {
                 }).join('; ');
                 vendorHint = 'Waehle den vendor-Namen EXAKT aus dieser Liste: ' + aliasLines + '. Nutze den Hauptnamen (vor der Klammer). Wenn kein Name passt, verwende den erkannten Marktnamen.';
               }
-              return `Analysiere dieses Foto sorgfaeltig. Es koennen ein oder mehrere Kassenbons abgebildet sein.
-Antworte NUR mit einem JSON-Array, ohne Markdown, ohne Erklaerung.
-Fuer jeden Bon ein SEPARATES Objekt - lies ALLE Felder direkt vom jeweiligen Bon ab:
-[{
-  "date": "YYYY-MM-DD. WICHTIG: Suche ALLE Datumsangaben auf diesem Bon (Kopf, Fuss, Transaktionszeile). Vergleiche sie - sie sollten alle dasselbe Jahr haben. Nimm das plausibelste Datum: nicht in der Zukunft, im Zweifel das neuere. Haeufiger Fehler: 2020 statt 2026 - pruefe das Jahr kritisch.",
-  "vendor": "${vendorHint}",
-  "amount": "Gesamtbetrag dieses Bons als Zahl z.B. 9.32",
-  "ort": "Haendlername gemaess vendor-Feld - also z.B. Lidl oder Netto",
-  "zahler": "Kartennummer falls auf Bon erkennbar. Suche zuerst nach # (z.B. ########1234), dann nach * (z.B. ****1234). Gib nur die letzten 4 sichtbaren Ziffern aus. Falls Barzahlung oder nicht erkennbar: leer lassen.",
-  "handschrift": "Handschriftliche Notizen auf dem Bon falls vorhanden sonst leer"
-}]
-Wenn kein Bon erkennbar: leeres Array [].
-WICHTIG: Jeder Bon hat sein EIGENES Datum und seine EIGENEN Daten - niemals von anderem Bon kopieren!`;
+              return `Analysiere dieses Foto. Es koennen ein oder mehrere Kassenbons abgebildet sein.
+Antworte NUR mit einem JSON-Array ohne Markdown ohne Erklaerung. Fuer jeden Bon ein SEPARATES Objekt.
+
+ANLEITUNG fuer deutsche Kassenbons:
+
+DATUM: Suche im UNTEREN Teil des Bons im Kundenbeleg-Abschnitt nach "Datum" gefolgt von einem Datum, ODER nach einem Datum direkt neben einer Uhrzeit (Format TT.MM.JJ oder TT.MM.JJJJ). Das korrekte Transaktionsdatum steht IMMER neben oder direkt bei der Uhrzeit der Transaktion. Zweistellige Jahre: 25=2025, 26=2026. Ausgabe als YYYY-MM-DD.
+
+BETRAG: Die Zahl neben SUMME, TOTAL, oder "Betrag EUR" im Kundenbeleg. Als Dezimalzahl z.B. 46.34
+
+KARTENNUMMER: Suche im Kundenbeleg nach einer maschierten Nummer direkt bei "Kartenzahlung", "EC-Cash", "girocard" oder "Nr.". Format: viele # oder * gefolgt von 4 sichtbaren Ziffern, z.B. "################6501" oder "########6501 01". Extrahiere NUR die letzten 4 Ziffern vor einem Leerzeichen oder Zeilenende. NICHT verwenden: Bonnummer, Kassennummer, TSE-Seriennummer, Barcode, Steuernummer, Referenznummer, Terminal-ID. Bei Barzahlung oder nicht erkennbar: leer lassen.
+
+ORT: ${vendorHint}
+
+HANDSCHRIFT: Nur handgeschriebener Text (nicht gedruckt). Sonst leer.
+
+Format: [{"date":"...","vendor":"...","amount":"...","ort":"...","zahler":"...","handschrift":"..."}]
+Wenn kein Bon: [].
+KRITISCH: Bei mehreren Bons auf einem Foto hat jeder Bon EIGENE Werte - Datum und Kartennummer NIEMALS zwischen Bons kopieren!`;
             })() }
           ]
         }]
