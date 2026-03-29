@@ -17,7 +17,6 @@
     --muted: #888;
     --success: #2d7a3a;
     --danger: #c8440a;
-    --highlight: #fff3cd;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -48,7 +47,6 @@
     line-height: 1;
     color: white;
   }
-
   header h1 span { color: var(--accent2); }
 
   #loginBtn {
@@ -60,20 +58,12 @@
     font-family: 'DM Mono', monospace;
     font-size: 0.75rem;
     cursor: pointer;
-    letter-spacing: 0.05em;
-    transition: opacity 0.2s;
     white-space: nowrap;
+    transition: opacity 0.2s;
   }
   #loginBtn:hover { opacity: 0.85; }
   #loginBtn.logged-in { background: var(--success); cursor: default; }
-
-  #loginStatus {
-    font-size: 0.65rem;
-    color: #aaa;
-    letter-spacing: 0.05em;
-    text-align: right;
-    margin-top: 2px;
-  }
+  #loginStatus { font-size: 0.65rem; color: #aaa; text-align: right; margin-top: 2px; }
 
   main {
     flex: 1;
@@ -86,7 +76,52 @@
     width: 100%;
   }
 
-  /* Upload zone */
+  .setup-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  .setup-card.done { border-color: var(--success); }
+  .setup-card-title { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+  .setup-card.done .setup-card-title { color: var(--success); }
+
+  .input-row { display: flex; gap: 0.5rem; align-items: center; }
+
+  .field-value {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.8rem;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    width: 100%;
+    transition: border-color 0.15s;
+  }
+  .field-value:focus { outline: none; border-color: var(--accent2); }
+  .field-value.amount { color: var(--accent2); font-weight: 500; }
+
+  .btn-small {
+    background: var(--accent2);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 0.4rem 0.8rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.2s;
+  }
+  .btn-small:hover { opacity: 0.85; }
+  .btn-small.ghost { background: none; border: 1px solid var(--border); color: var(--muted); }
+
+  .hint-text { font-size: 0.65rem; color: var(--muted); line-height: 1.5; }
+
   .upload-zone {
     border: 2px dashed var(--border);
     border-radius: 12px;
@@ -97,27 +132,12 @@
     position: relative;
     background: var(--surface);
   }
-
-  .upload-zone:hover, .upload-zone.drag-over {
-    border-color: var(--accent2);
-    background: #fff8f5;
-  }
-
-  .upload-zone input[type="file"] {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    cursor: pointer;
-    width: 100%;
-    height: 100%;
-  }
-
+  .upload-zone:hover, .upload-zone.drag-over { border-color: var(--accent2); background: #fff8f5; }
+  .upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
   .upload-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
-
   .upload-zone p { font-size: 0.85rem; color: var(--muted); line-height: 1.5; }
-  .upload-zone .hint { margin-top: 0.5rem; font-size: 0.7rem; color: var(--accent2); letter-spacing: 0.05em; }
+  .upload-zone .hint { margin-top: 0.5rem; font-size: 0.7rem; color: var(--accent2); }
 
-  /* Cards */
   .scan-card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -125,39 +145,15 @@
     overflow: hidden;
     animation: slideIn 0.3s ease;
   }
-
-  @keyframes slideIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+  @keyframes slideIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
   .scan-card-header {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid var(--border);
-    background: #fafaf8;
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); background: #fafaf8;
   }
-
-  .scan-card img {
-    width: 52px;
-    height: 52px;
-    object-fit: cover;
-    border-radius: 6px;
-    border: 1px solid var(--border);
-    flex-shrink: 0;
-  }
-
+  .scan-card img { width: 52px; height: 52px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border); flex-shrink: 0; }
   .scan-card-info { flex: 1; min-width: 0; }
-
-  .scan-card-filename {
-    font-size: 0.75rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
+  .scan-card-filename { font-size: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .scan-card-status { font-size: 0.65rem; color: var(--muted); margin-top: 2px; }
   .scan-card-status.scanning { color: #c8880a; }
   .scan-card-status.done { color: var(--success); }
@@ -165,148 +161,39 @@
 
   .scan-card-body { padding: 0.75rem 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
 
-  .field-row {
-    display: grid;
-    grid-template-columns: 90px 1fr;
-    gap: 0.5rem;
-    align-items: center;
-  }
-
+  .field-row { display: grid; grid-template-columns: 90px 1fr; gap: 0.5rem; align-items: center; }
   .field-label { font-size: 0.65rem; color: var(--muted); letter-spacing: 0.07em; text-transform: uppercase; }
 
-  .field-value {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 0.3rem 0.5rem;
-    font-size: 0.8rem;
-    color: var(--text);
-    font-family: 'DM Mono', monospace;
-    width: 100%;
-    transition: border-color 0.15s;
-  }
-
-  .field-value:focus { outline: none; border-color: var(--accent2); }
-  .field-value.amount { color: var(--accent2); font-weight: 500; }
-
-  .remove-btn {
-    background: none;
-    border: none;
-    color: var(--muted);
-    cursor: pointer;
-    font-size: 1rem;
-    padding: 0.25rem;
-    border-radius: 4px;
-    transition: color 0.15s;
-    flex-shrink: 0;
-  }
+  .remove-btn { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1rem; padding: 0.25rem; border-radius: 4px; transition: color 0.15s; flex-shrink: 0; }
   .remove-btn:hover { color: var(--danger); }
 
-  .pulse {
-    display: inline-block;
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    background: #c8880a;
-    animation: pulse 1s infinite;
-    margin-right: 0.4rem;
-    vertical-align: middle;
-  }
+  .pulse { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #c8880a; animation: pulse 1s infinite; margin-right: 0.4rem; vertical-align: middle; }
+  @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.3; transform: scale(0.6); } }
 
-  @keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.3; transform: scale(0.6); }
-  }
-
-  /* Summary */
-  .summary-bar {
-    background: var(--accent);
-    color: white;
-    border-radius: 12px;
-    padding: 1rem 1.25rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
+  .summary-bar { background: var(--accent); color: white; border-radius: 12px; padding: 1rem 1.25rem; display: flex; justify-content: space-between; align-items: center; }
   .summary-label { font-size: 0.65rem; color: #aaa; text-transform: uppercase; letter-spacing: 0.07em; }
-  .summary-total { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: white; letter-spacing: 0.05em; }
+  .summary-total { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: white; }
   .summary-count { font-size: 0.65rem; color: #aaa; text-align: right; }
 
-  /* Buttons */
-  .btn-primary {
-    background: var(--accent2);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    padding: 0.9rem 1.5rem;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.1rem;
-    letter-spacing: 0.08em;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    width: 100%;
-  }
-
+  .btn-primary { background: var(--accent2); color: white; border: none; border-radius: 10px; padding: 0.9rem 1.5rem; font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: 0.08em; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%; }
   .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
   .btn-primary:disabled { background: var(--border); color: var(--muted); cursor: not-allowed; transform: none; }
 
-  .btn-secondary {
-    background: none;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    color: var(--muted);
-    padding: 0.6rem;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.75rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    width: 100%;
-    text-align: center;
-  }
+  .btn-secondary { background: none; border: 1px solid var(--border); border-radius: 10px; color: var(--muted); padding: 0.6rem; font-family: 'DM Mono', monospace; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; width: 100%; text-align: center; }
   .btn-secondary:hover { border-color: var(--danger); color: var(--danger); }
 
   .separator { height: 1px; background: var(--border); margin: 0.25rem 0; }
 
-  /* Toast */
-  #toast {
-    position: fixed;
-    bottom: 1.5rem;
-    left: 50%;
-    transform: translateX(-50%) translateY(100px);
-    background: var(--accent);
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border-radius: 30px;
-    font-size: 0.8rem;
-    transition: transform 0.3s ease;
-    z-index: 999;
-    white-space: nowrap;
-  }
+  #toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--accent); color: white; padding: 0.75rem 1.5rem; border-radius: 30px; font-size: 0.8rem; transition: transform 0.3s ease; z-index: 999; white-space: nowrap; }
   #toast.show { transform: translateX(-50%) translateY(0); }
   #toast.success { background: var(--success); }
   #toast.error { background: var(--danger); }
-
-  .notice {
-    background: var(--highlight);
-    border: 1px solid #e8d88a;
-    border-radius: 8px;
-    padding: 0.75rem 1rem;
-    font-size: 0.75rem;
-    color: #7a6200;
-    line-height: 1.5;
-  }
 </style>
 </head>
 <body>
 
 <header>
-  <div>
-    <h1>BON<span>.</span>SCAN</h1>
-  </div>
+  <div><h1>BON<span>.</span>SCAN</h1></div>
   <div style="text-align:right">
     <button id="loginBtn" onclick="handleLogin()">🔐 Mit Google anmelden</button>
     <div id="loginStatus">nicht angemeldet</div>
@@ -314,10 +201,25 @@
 </header>
 
 <main>
-  <div class="notice" id="loginNotice">
-    ⚠️ Bitte zuerst mit Google anmelden, damit Einträge in Google Sheets gespeichert werden können.
+
+  <!-- API Key -->
+  <div class="setup-card" id="apiKeyCard">
+    <div class="setup-card-title" id="apiKeyTitle">🤖 Anthropic API Key</div>
+    <div class="input-row">
+      <input id="apiKeyInput" type="password" class="field-value" placeholder="sk-ant-...">
+      <button class="btn-small" onclick="saveApiKey()">Speichern</button>
+      <button class="btn-small ghost" id="apiKeyEditBtn" onclick="editApiKey()" style="display:none">Ändern</button>
+    </div>
+    <div class="hint-text">Einmalig eingeben · lokal gespeichert · <a href="https://console.anthropic.com" target="_blank" style="color:var(--accent2)">console.anthropic.com</a></div>
   </div>
 
+  <!-- Google -->
+  <div class="setup-card" id="googleCard">
+    <div class="setup-card-title" id="googleTitle">📊 Google Sheets</div>
+    <div class="hint-text" id="googleHint">Oben anmelden um Einträge direkt in Sheets zu speichern.</div>
+  </div>
+
+  <!-- Upload -->
   <div class="upload-zone" id="uploadZone">
     <input type="file" id="fileInput" accept="image/*" multiple>
     <div class="upload-icon">📷</div>
@@ -346,26 +248,60 @@
 <div id="toast"></div>
 
 <script>
-// ─── CONFIG ────────────────────────────────────────────────────────────────
 const CLIENT_ID = '829620952076-02bue5il4lq8dn8r8n4g7e3t2t31u57a.apps.googleusercontent.com';
 const SCOPES = 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive.file';
 const SHEET_NAME = 'Receipt Scanner Data';
-const FOLDER_NAME = 'Finance'; // under Library/
-const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
+const FOLDER_NAME = 'Finance';
+const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages';
 const MODEL = 'claude-sonnet-4-20250514';
 
-// ─── STATE ──────────────────────────────────────────────────────────────────
 let accessToken = null;
+let anthropicKey = localStorage.getItem('anthropic_api_key') || '';
 let entries = [];
 let nextId = 1;
 let spreadsheetId = null;
 
-// ─── GOOGLE AUTH ────────────────────────────────────────────────────────────
+// ── API KEY ──
+function initApiKey() {
+  if (!anthropicKey) return;
+  document.getElementById('apiKeyInput').value = '••••••••••••••••';
+  document.getElementById('apiKeyInput').disabled = true;
+  document.getElementById('apiKeyCard').classList.add('done');
+  document.getElementById('apiKeyTitle').textContent = '✓ Anthropic API Key gesetzt';
+  document.getElementById('apiKeyEditBtn').style.display = 'inline-block';
+}
+
+function saveApiKey() {
+  const val = document.getElementById('apiKeyInput').value.trim();
+  if (!val.startsWith('sk-ant-')) { showToast('Ungültiger Key — muss mit sk-ant- beginnen', 'error'); return; }
+  anthropicKey = val;
+  localStorage.setItem('anthropic_api_key', val);
+  document.getElementById('apiKeyInput').value = '••••••••••••••••';
+  document.getElementById('apiKeyInput').disabled = true;
+  document.getElementById('apiKeyCard').classList.add('done');
+  document.getElementById('apiKeyTitle').textContent = '✓ Anthropic API Key gesetzt';
+  document.getElementById('apiKeyEditBtn').style.display = 'inline-block';
+  showToast('API Key gespeichert', 'success');
+  updateSaveBtn();
+}
+
+function editApiKey() {
+  anthropicKey = '';
+  localStorage.removeItem('anthropic_api_key');
+  document.getElementById('apiKeyInput').value = '';
+  document.getElementById('apiKeyInput').disabled = false;
+  document.getElementById('apiKeyCard').classList.remove('done');
+  document.getElementById('apiKeyTitle').textContent = '🤖 Anthropic API Key';
+  document.getElementById('apiKeyEditBtn').style.display = 'none';
+}
+
+// ── GOOGLE AUTH ──
 function handleLogin() {
   if (accessToken) return;
+  const redirectUri = window.location.href.split('#')[0];
   const params = new URLSearchParams({
     client_id: CLIENT_ID,
-    redirect_uri: window.location.origin + window.location.pathname,
+    redirect_uri: redirectUri,
     response_type: 'token',
     scope: SCOPES,
     include_granted_scopes: 'true'
@@ -389,100 +325,110 @@ function onLoggedIn() {
   document.getElementById('loginBtn').textContent = '✓ Angemeldet';
   document.getElementById('loginBtn').classList.add('logged-in');
   document.getElementById('loginStatus').textContent = 'Google Sheets bereit';
-  document.getElementById('loginNotice').style.display = 'none';
+  document.getElementById('googleCard').classList.add('done');
+  document.getElementById('googleTitle').textContent = '✓ Google Sheets verbunden';
+  document.getElementById('googleHint').textContent = 'Einträge werden in "Receipt Scanner Data" gespeichert.';
   updateSaveBtn();
 }
 
-// ─── FILE HANDLING ──────────────────────────────────────────────────────────
+// ── FILES ──
 const fileInput = document.getElementById('fileInput');
 const uploadZone = document.getElementById('uploadZone');
 
 uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
 uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
-uploadZone.addEventListener('drop', e => {
-  e.preventDefault();
-  uploadZone.classList.remove('drag-over');
-  handleFiles([...e.dataTransfer.files]);
-});
+uploadZone.addEventListener('drop', e => { e.preventDefault(); uploadZone.classList.remove('drag-over'); handleFiles([...e.dataTransfer.files]); });
 fileInput.addEventListener('change', () => { handleFiles([...fileInput.files]); fileInput.value = ''; });
 
 function handleFiles(files) {
+  if (!anthropicKey) { showToast('Bitte zuerst Anthropic API Key eingeben', 'error'); return; }
   files.filter(f => f.type.startsWith('image/')).forEach(processFile);
 }
 
 async function toBase64(file) {
-  return new Promise((res, rej) => {
-    const r = new FileReader();
-    r.onload = () => res(r.result.split(',')[1]);
-    r.onerror = rej;
-    r.readAsDataURL(file);
-  });
+  return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result.split(',')[1]); r.onerror = rej; r.readAsDataURL(file); });
 }
-
 async function toThumb(file) {
-  return new Promise(res => {
-    const r = new FileReader();
-    r.onload = () => res(r.result);
-    r.readAsDataURL(file);
-  });
+  return new Promise(res => { const r = new FileReader(); r.onload = () => res(r.result); r.readAsDataURL(file); });
 }
 
-// ─── SCAN ───────────────────────────────────────────────────────────────────
+// ── SCAN ──
 async function processFile(file) {
-  const id = nextId++;
   const thumb = await toThumb(file);
-  const entry = { id, filename: file.name, thumb, date: '', vendor: '', amount: '', ort: '', note: '', status: 'scanning' };
-  entries.push(entry);
-  renderCard(entry);
+
+  // Placeholder card while scanning
+  const placeholderId = nextId++;
+  const placeholder = { id: placeholderId, filename: file.name, thumb, date: '', vendor: '', amount: '', ort: '', note: '', status: 'scanning' };
+  entries.push(placeholder);
+  renderCard(placeholder);
   updateSummary();
 
   try {
     const b64 = await toBase64(file);
-    const res = await fetch(ANTHROPIC_API_URL, {
+    const res = await fetch(ANTHROPIC_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': anthropicKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
       body: JSON.stringify({
         model: MODEL,
-        max_tokens: 1000,
+        max_tokens: 2000,
         messages: [{
           role: 'user',
           content: [
             { type: 'image', source: { type: 'base64', media_type: file.type || 'image/jpeg', data: b64 } },
-            { type: 'text', text: `Analysiere diesen Kassenbon. Antworte NUR mit einem JSON-Objekt, ohne Markdown, ohne Erklärung:
-{
-  "date": "YYYY-MM-DD",
-  "vendor": "Marktname z.B. Netto, Lidl, Aldi, Rewe, Famila, Edeka, Penny, Kaufland",
-  "amount": "Gesamtbetrag als Zahl z.B. 9.32",
-  "ort": "Stadt oder Ort des Marktes",
-  "handschrift": "handschriftliche Notizen auf dem Bon falls vorhanden, sonst leer"
-}` }
+            { type: 'text', text: `Analysiere dieses Foto. Es koennen ein oder mehrere Kassenbons abgebildet sein. Antworte NUR mit einem JSON-Array, ohne Markdown, ohne Erklaerung. Fuer jeden erkannten Bon ein Objekt: [{"date":"YYYY-MM-DD","vendor":"Marktname z.B. Netto Lidl Aldi Rewe Famila Edeka Penny Kaufland","amount":"Gesamtbetrag als Zahl z.B. 9.32","ort":"Stadt oder Ort des Marktes","handschrift":"handschriftliche Notizen auf dem Bon falls vorhanden sonst leer"}]. Wenn kein Bon erkennbar: leeres Array [].` }
           ]
         }]
       })
     });
 
     const data = await res.json();
-    const raw = data.content?.[0]?.text || '{}';
-    const parsed = JSON.parse(raw.replace(/```json|```/g, '').trim());
+    if (data.error) throw new Error(data.error.message);
+    const raw = (data.content?.[0]?.text || '[]').replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(raw);
+    const bons = Array.isArray(parsed) ? parsed : [parsed];
 
-    entry.date = parsed.date || '';
-    entry.vendor = parsed.vendor || '';
-    entry.amount = parsed.amount ? String(parsed.amount) : '';
-    entry.ort = parsed.ort || '';
-    entry.note = parsed.handschrift ? `Einkauf - ${parsed.handschrift}` : 'Einkauf';
-    entry.status = 'done';
+    // Remove placeholder
+    entries = entries.filter(e => e.id !== placeholderId);
+    document.getElementById('card-' + placeholderId)?.remove();
+
+    if (bons.length === 0) {
+      showToast('Kein Bon auf dem Foto erkannt', 'error');
+      updateSummary();
+      return;
+    }
+
+    bons.forEach((bon, idx) => {
+      const id = nextId++;
+      const entry = {
+        id,
+        filename: bons.length > 1 ? file.name + ' (' + (idx+1) + '/' + bons.length + ')' : file.name,
+        thumb,
+        date: bon.date || '',
+        vendor: bon.vendor || '',
+        amount: bon.amount ? String(bon.amount) : '',
+        ort: bon.ort || '',
+        note: bon.handschrift ? 'Einkauf - ' + bon.handschrift : 'Einkauf',
+        status: 'done'
+      };
+      entries.push(entry);
+      renderCard(entry);
+    });
 
   } catch (err) {
-    entry.status = 'error';
-    entry.note = 'Scan fehlgeschlagen';
+    const ph = entries.find(e => e.id === placeholderId);
+    if (ph) { ph.status = 'error'; ph.note = err.message || 'Scan fehlgeschlagen'; updateCard(ph); }
     console.error(err);
   }
 
-  updateCard(entry);
   updateSummary();
 }
 
-// ─── RENDER ─────────────────────────────────────────────────────────────────
+// ── RENDER ──
 function renderCard(entry) {
   const div = document.createElement('div');
   div.className = 'scan-card';
@@ -497,35 +443,14 @@ function updateCard(entry) {
 }
 
 function cardHTML(entry) {
-  const statusText = {
-    scanning: `<span class="pulse"></span>Wird gescannt…`,
-    done: '✓ Erfasst',
-    error: '✗ Fehler beim Scannen'
-  }[entry.status];
-
+  const statusText = { scanning: `<span class="pulse"></span>Wird gescannt…`, done: '✓ Erfasst', error: `✗ ${esc(entry.note)}` }[entry.status];
   const fields = entry.status === 'scanning' ? '' : `
     <div class="separator"></div>
-    <div class="field-row">
-      <span class="field-label">Datum</span>
-      <input class="field-value" type="date" value="${entry.date}" onchange="updateField(${entry.id},'date',this.value)">
-    </div>
-    <div class="field-row">
-      <span class="field-label">Zahler</span>
-      <input class="field-value" type="text" value="${esc(entry.vendor)}" placeholder="Marktname" onchange="updateField(${entry.id},'vendor',this.value)">
-    </div>
-    <div class="field-row">
-      <span class="field-label">Betrag €</span>
-      <input class="field-value amount" type="number" step="0.01" value="${entry.amount}" placeholder="0.00" onchange="updateField(${entry.id},'amount',this.value)">
-    </div>
-    <div class="field-row">
-      <span class="field-label">Ort</span>
-      <input class="field-value" type="text" value="${esc(entry.ort)}" placeholder="Stadt" onchange="updateField(${entry.id},'ort',this.value)">
-    </div>
-    <div class="field-row">
-      <span class="field-label">Bemerkung</span>
-      <input class="field-value" type="text" value="${esc(entry.note)}" placeholder="Einkauf" onchange="updateField(${entry.id},'note',this.value)">
-    </div>
-  `;
+    <div class="field-row"><span class="field-label">Datum</span><input class="field-value" type="date" value="${entry.date}" onchange="updateField(${entry.id},'date',this.value)"></div>
+    <div class="field-row"><span class="field-label">Zahler</span><input class="field-value" type="text" value="${esc(entry.vendor)}" placeholder="Marktname" onchange="updateField(${entry.id},'vendor',this.value)"></div>
+    <div class="field-row"><span class="field-label">Betrag €</span><input class="field-value amount" type="number" step="0.01" value="${entry.amount}" placeholder="0.00" onchange="updateField(${entry.id},'amount',this.value)"></div>
+    <div class="field-row"><span class="field-label">Ort</span><input class="field-value" type="text" value="${esc(entry.ort)}" placeholder="Stadt" onchange="updateField(${entry.id},'ort',this.value)"></div>
+    <div class="field-row"><span class="field-label">Bemerkung</span><input class="field-value" type="text" value="${esc(entry.note)}" placeholder="Einkauf" onchange="updateField(${entry.id},'note',this.value)"></div>`;
 
   return `
     <div class="scan-card-header">
@@ -536,13 +461,10 @@ function cardHTML(entry) {
       </div>
       <button class="remove-btn" onclick="removeEntry(${entry.id})">✕</button>
     </div>
-    ${entry.status !== 'scanning' ? `<div class="scan-card-body">${fields}</div>` : ''}
-  `;
+    ${entry.status !== 'scanning' ? `<div class="scan-card-body">${fields}</div>` : ''}`;
 }
 
-function esc(s) {
-  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 function updateField(id, field, value) {
   const e = entries.find(e => e.id === id);
@@ -557,15 +479,12 @@ function removeEntry(id) {
 }
 
 function updateSummary() {
-  const done = entries.filter(e => e.status !== 'scanning');
   const total = entries.reduce((s, e) => s + (parseFloat(e.amount) || 0), 0);
   const show = entries.length > 0;
-
   document.getElementById('summaryBar').style.display = show ? 'flex' : 'none';
   document.getElementById('clearBtn').style.display = show ? 'block' : 'none';
   document.getElementById('countLabel').textContent = `${entries.length} Beleg${entries.length !== 1 ? 'e' : ''}`;
   document.getElementById('totalAmount').textContent = total.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' });
-
   updateSaveBtn();
 }
 
@@ -581,121 +500,75 @@ function clearAll() {
   updateSummary();
 }
 
-// ─── GOOGLE SHEETS ──────────────────────────────────────────────────────────
+// ── SHEETS ──
 async function saveToSheets() {
-  if (!accessToken) { showToast('Bitte zuerst anmelden', 'error'); return; }
-
+  if (!accessToken) { showToast('Bitte zuerst mit Google anmelden', 'error'); return; }
   const done = entries.filter(e => e.status === 'done');
   if (!done.length) return;
-
   showToast('Speichere in Google Sheets…');
 
   try {
     const sheetId = await getOrCreateSheet();
-
-    const rows = done.map(e => [
-      e.date,
-      1,
-      parseFloat(e.amount) || 0,
-      e.vendor,
-      e.ort,
-      e.note
-    ]);
-
-    await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/A:F:append?valueInputOption=USER_ENTERED`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ values: rows })
-    });
-
+    const rows = done.map(e => [e.date, 1, parseFloat(e.amount) || 0, e.vendor, e.ort, e.note]);
+    const res = await fetch(
+      `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/A:F:append?valueInputOption=USER_ENTERED`,
+      { method: 'POST', headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ values: rows }) }
+    );
+    if (!res.ok) throw new Error(await res.text());
     showToast(`✓ ${rows.length} Eintrag${rows.length !== 1 ? 'e' : ''} gespeichert!`, 'success');
-
-    // Remove saved entries
-    const savedIds = done.map(e => e.id);
-    savedIds.forEach(id => {
-      entries = entries.filter(e => e.id !== id);
-      const card = document.getElementById(`card-${id}`);
-      if (card) card.remove();
+    done.forEach(e => {
+      entries = entries.filter(x => x.id !== e.id);
+      document.getElementById(`card-${e.id}`)?.remove();
     });
     updateSummary();
-
   } catch (err) {
     console.error(err);
-    showToast('Fehler beim Speichern', 'error');
+    showToast('Fehler: ' + err.message, 'error');
   }
 }
 
 async function getOrCreateSheet() {
   if (spreadsheetId) return spreadsheetId;
-
-  // Search for existing sheet
   const q = encodeURIComponent(`name='${SHEET_NAME}' and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false`);
-  const searchRes = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)`, {
-    headers: { 'Authorization': `Bearer ${accessToken}` }
-  });
-  const searchData = await searchRes.json();
+  const s = await (await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id)`, { headers: { 'Authorization': `Bearer ${accessToken}` } })).json();
+  if (s.files?.length) { spreadsheetId = s.files[0].id; return spreadsheetId; }
 
-  if (searchData.files && searchData.files.length > 0) {
-    spreadsheetId = searchData.files[0].id;
-    return spreadsheetId;
-  }
+  const fq = encodeURIComponent(`name='${FOLDER_NAME}' and mimeType='application/vnd.google-apps.folder' and trashed=false`);
+  const fd = await (await fetch(`https://www.googleapis.com/drive/v3/files?q=${fq}&fields=files(id)`, { headers: { 'Authorization': `Bearer ${accessToken}` } })).json();
+  const folderId = fd.files?.[0]?.id || null;
 
-  // Find Library/Finance folder
-  const folderRes = await fetch(`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(`name='${FOLDER_NAME}' and mimeType='application/vnd.google-apps.folder' and trashed=false`)}&fields=files(id,name)`, {
-    headers: { 'Authorization': `Bearer ${accessToken}` }
-  });
-  const folderData = await folderRes.json();
-  const folderId = folderData.files?.[0]?.id || null;
-
-  // Create new sheet
-  const createRes = await fetch('https://sheets.googleapis.com/v4/spreadsheets', {
+  const created = await (await fetch('https://sheets.googleapis.com/v4/spreadsheets', {
     method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${accessToken}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      properties: { title: SHEET_NAME },
-      sheets: [{ properties: { title: 'Kassenbons' } }]
-    })
-  });
-  const created = await createRes.json();
+    headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ properties: { title: SHEET_NAME }, sheets: [{ properties: { title: 'Kassenbons' } }] })
+  })).json();
   spreadsheetId = created.spreadsheetId;
 
-  // Add header row
   await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/A1:append?valueInputOption=RAW`, {
     method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${accessToken}`,
-      'Content-Type': 'application/json'
-    },
+    headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({ values: [['Datum', 'Berechnen', 'Betrag', 'Zahler', 'Ort', 'Bemerkung']] })
   });
 
-  // Move to Finance folder if found
   if (folderId) {
     await fetch(`https://www.googleapis.com/drive/v3/files/${spreadsheetId}?addParents=${folderId}&fields=id`, {
-      method: 'PATCH',
-      headers: { 'Authorization': `Bearer ${accessToken}` }
+      method: 'PATCH', headers: { 'Authorization': `Bearer ${accessToken}` }
     });
   }
-
   return spreadsheetId;
 }
 
-// ─── TOAST ───────────────────────────────────────────────────────────────────
+// ── TOAST ──
 function showToast(msg, type = '') {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.className = type ? `show ${type}` : 'show';
   clearTimeout(t._timer);
-  t._timer = setTimeout(() => { t.className = ''; }, 3000);
+  t._timer = setTimeout(() => { t.className = ''; }, 3500);
 }
 
-// ─── INIT ────────────────────────────────────────────────────────────────────
+// ── INIT ──
+initApiKey();
 checkAuthCallback();
 </script>
 </body>
