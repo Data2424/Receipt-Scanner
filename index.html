@@ -435,11 +435,18 @@ async function processFile(file) {
                 vendorHint = 'Waehle den vendor-Namen EXAKT aus dieser Liste: ' + aliasLines + '. Nutze den Hauptnamen (vor der Klammer). Wenn kein Name passt, verwende den erkannten Marktnamen.';
               }
               return `Analysiere dieses Foto sorgfaeltig. Es koennen ein oder mehrere Kassenbons abgebildet sein.
-WICHTIG: Lies bei jedem Bon das Datum DIREKT vom Bon ab - nicht schaetzen.
 Antworte NUR mit einem JSON-Array, ohne Markdown, ohne Erklaerung.
-Fuer jeden erkannten Bon ein separates Objekt mit dem JEWEILIGEN Datum dieses Bons:
-[{"date":"YYYY-MM-DD","vendor":"${vendorHint}","amount":"Gesamtbetrag als Zahl z.B. 9.32","ort":"Stadt oder Ort","handschrift":"handschriftliche Notizen falls vorhanden sonst leer"}]
-Wenn kein Bon erkennbar: leeres Array [].`;
+Fuer jeden Bon ein SEPARATES Objekt - lies die Felder DIREKT vom jeweiligen Bon ab:
+[{
+  "date": "Datum dieses Bons als YYYY-MM-DD - direkt vom Bon ablesen",
+  "vendor": "${vendorHint}",
+  "amount": "Gesamtbetrag dieses Bons als Zahl z.B. 9.32",
+  "ort": "Name der Filiale oder des Ladens laut Bon-Kopf z.B. Lidl Quickborn oder nur Lidl",
+  "zahler": "Zahlungsmittel falls erkennbar: z.B. EC ****1234 oder Visa ****5678 - nur die letzten 4 Ziffern und Kartentyp. Falls bar oder nicht erkennbar: leer lassen",
+  "handschrift": "Handschriftliche Notizen auf dem Bon falls vorhanden sonst leer"
+}]
+Wenn kein Bon erkennbar: leeres Array [].
+WICHTIG: Jeder Bon hat sein EIGENES Datum - nicht kopieren!`;
             })() }
           ]
         }]
@@ -472,6 +479,7 @@ Wenn kein Bon erkennbar: leeres Array [].`;
         vendor: bon.vendor || '',
         amount: bon.amount ? String(bon.amount) : '',
         ort: bon.ort || '',
+        zahler: bon.zahler || '',
         note: bon.handschrift ? 'Einkauf - ' + bon.handschrift : 'Einkauf',
         status: 'done'
       };
@@ -507,9 +515,10 @@ function cardHTML(entry) {
   const fields = entry.status === 'scanning' ? '' : `
     <div class="separator"></div>
     <div class="field-row"><span class="field-label">Datum</span><input class="field-value" type="date" value="${entry.date}" onchange="updateField(${entry.id},'date',this.value)"></div>
-    <div class="field-row"><span class="field-label">Zahler</span><input class="field-value" type="text" value="${esc(entry.vendor)}" placeholder="Marktname" onchange="updateField(${entry.id},'vendor',this.value)"></div>
+    <div class="field-row"><span class="field-label">Händler</span><input class="field-value" type="text" value="${esc(entry.vendor)}" placeholder="Marktname" onchange="updateField(${entry.id},'vendor',this.value)"></div>
     <div class="field-row"><span class="field-label">Betrag €</span><input class="field-value amount" type="number" step="0.01" value="${entry.amount}" placeholder="0.00" onchange="updateField(${entry.id},'amount',this.value)"></div>
-    <div class="field-row"><span class="field-label">Ort</span><input class="field-value" type="text" value="${esc(entry.ort)}" placeholder="Stadt" onchange="updateField(${entry.id},'ort',this.value)"></div>
+    <div class="field-row"><span class="field-label">Filiale</span><input class="field-value" type="text" value="${esc(entry.ort)}" placeholder="Filialname" onchange="updateField(${entry.id},'ort',this.value)"></div>
+    <div class="field-row"><span class="field-label">Zahler</span><input class="field-value" type="text" value="${esc(entry.zahler||'')}" placeholder="EC ****1234" onchange="updateField(${entry.id},'zahler',this.value)"></div>
     <div class="field-row"><span class="field-label">Bemerkung</span><input class="field-value" type="text" value="${esc(entry.note)}" placeholder="Einkauf" onchange="updateField(${entry.id},'note',this.value)"></div>`;
 
   return `
@@ -569,7 +578,7 @@ async function saveToSheets() {
 
   try {
     const sheetId = await getOrCreateSheet();
-    const rows = done.map(e => [e.date, 1, parseFloat(e.amount) || 0, e.vendor, e.ort, e.note]);
+    const rows = done.map(e => [e.date, 1, parseFloat(e.amount) || 0, e.zahler || '', e.ort, e.note]);
     const res = await fetch(
       `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/A:F:append?valueInputOption=USER_ENTERED`,
       { method: 'POST', headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ values: rows }) }
